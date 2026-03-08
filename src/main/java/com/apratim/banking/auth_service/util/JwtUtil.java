@@ -1,5 +1,6 @@
 package com.apratim.banking.auth_service.util;
 
+import com.apratim.banking.auth_service.config.JwtConfig;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -11,9 +12,14 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    public final String SECRET = "mysecretkeymysecretkeymysecretkey12345";
+    private final JwtConfig jwtConfig;
+    public final Key key;
 
-    public final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    public JwtUtil(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+        this.key = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
+    }
+
 
     public String generateToken(String username){
 
