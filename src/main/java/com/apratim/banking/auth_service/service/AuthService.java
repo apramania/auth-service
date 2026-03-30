@@ -4,6 +4,8 @@ import com.apratim.banking.auth_service.dto.LoginRequest;
 import com.apratim.banking.auth_service.dto.LoginResponse;
 import com.apratim.banking.auth_service.dto.RegisterRequest;
 import com.apratim.banking.auth_service.entity.User;
+import com.apratim.banking.auth_service.exception.InvalidPasswordException;
+import com.apratim.banking.auth_service.exception.UserNotFoundException;
 import com.apratim.banking.auth_service.repository.UserRepository;
 import com.apratim.banking.auth_service.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,10 +42,10 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request){
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username"));
+                .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invalid password");
+            throw new InvalidPasswordException();
         }
 
         String token = jwtUtil.generateToken(user.getUsername());
